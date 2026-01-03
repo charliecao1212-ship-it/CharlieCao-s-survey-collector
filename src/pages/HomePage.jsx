@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // 添加这行
 import { useLanguage } from '../hooks/useLanguage';
 import { labels } from '../utils/translations';
 
@@ -21,7 +22,7 @@ const HomePage = ({ submissions }) => {
       : '0.0',
     uniqueCourses: [...new Set(submissions.map(sub => sub.course))].length,
     uniqueTeachers: [...new Set(submissions.map(sub => sub.teacher))].length,
-    todayCourseCount: Object.keys(todayCourseStats).length // 新增：今天课程种类数
+    todayCourseCount: Object.keys(todayCourseStats).length
   };
 
   const recentSubmissions = submissions.slice(0, 5);
@@ -87,7 +88,7 @@ const HomePage = ({ submissions }) => {
               <tr>
                 <th>{t.tableId}</th>
                 <th>{t.tableEvaluator}</th>
-                <th>{language === 'cn' ? '今日课程' : 'Today\'s Course'}</th> {/* 修改这里 */}
+                <th>{language === 'cn' ? '今日课程' : 'Today\'s Course'}</th>
                 <th>{t.tableTeacher}</th>
                 <th>{t.tableRating}</th>
                 <th>{t.tableDate}</th>
@@ -98,7 +99,7 @@ const HomePage = ({ submissions }) => {
                 <tr key={sub.id}>
                   <td>{sub.id}</td>
                   <td>{sub.name}</td>
-                  <td>{sub.todayCourse || '-'}</td> {/* 修改这里 */}
+                  <td>{sub.todayCourse || '-'}</td>
                   <td>{sub.teacher}</td>
                   <td>
                     <div className="rating-stars">
@@ -116,9 +117,10 @@ const HomePage = ({ submissions }) => {
         
         {submissions.length > 5 && (
           <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-            <a href="/history" className="btn btn-primary">
+            {/* 修改这里：使用 Link 组件而不是 a 标签 */}
+            <Link to="/history" className="btn btn-primary">
               {t.viewAll} ({submissions.length})
-            </a>
+            </Link>
           </div>
         )}
       </div>

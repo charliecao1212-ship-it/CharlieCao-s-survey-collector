@@ -1,20 +1,28 @@
+// src/components/Navigation.jsx
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-// 导入语言相关的自定义钩子和翻译文件
 import { useLanguage } from '../hooks/useLanguage';
 import { labels } from '../utils/translations';
 
 const Navigation = () => {
   const location = useLocation();
-  // 使用语言上下文
   const { language, toggleLanguage } = useLanguage();
   const t = labels[language];
   
   const navItems = [
-    { path: '/', label: t.navHome, icon: '🏠' },
+    { path: '/', label: t.navHome, icon: '🏠' }, // 确保这里是 '/'
     { path: '/history', label: t.navHistory, icon: '📋' },
     { path: '/evaluation', label: t.navEvaluation, icon: '⭐' },
   ];
+
+  // 检查当前路径是否是首页
+  const isActive = (path) => {
+    // 对于首页，需要特殊处理：'/home' 和 '/' 都算首页
+    if (path === '/') {
+      return location.pathname === '/' || location.pathname === '/home';
+    }
+    return location.pathname === path;
+  };
 
   return (
     <nav style={{
@@ -40,15 +48,15 @@ const Navigation = () => {
                 key={item.path}
                 to={item.path}
                 style={{
-                  color: location.pathname === item.path ? '#ffd700' : 'white',
+                  color: isActive(item.path) ? '#ffd700' : 'white',
                   textDecoration: 'none',
                   padding: '0.5rem 1rem',
                   borderRadius: '5px',
-                  background: location.pathname === item.path ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+                  background: isActive(item.path) ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
-                  fontWeight: location.pathname === item.path ? '600' : '400'
+                  fontWeight: isActive(item.path) ? '600' : '400'
                 }}
               >
                 <span>{item.icon}</span>
@@ -58,7 +66,7 @@ const Navigation = () => {
           </div>
         </div>
         
-        {/* 直接在导航栏中实现语言切换按钮 */}
+        {/* 语言切换按钮 */}
         <div style={{
           display: 'flex',
           gap: '0.5rem',

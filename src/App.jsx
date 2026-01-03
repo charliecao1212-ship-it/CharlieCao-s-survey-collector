@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import HistoryPage from './pages/HistoryPage';
@@ -53,23 +53,24 @@ function App() {
   };
 
   // 获取最近评价者姓名
-  const recentNames = [...new Set(submissions.slice(0, 5).map(s => s.name))];
+  // const recentNames = [...new Set(submissions.slice(0, 5).map(s => s.name))];
 
   return (
-    <Router>
+<Router>
       <Layout>
         <Routes>
+          {/* 添加重定向：根路径自动跳转到首页 */}
           <Route path="/" element={<HomePage submissions={submissions} />} />
+          <Route path="/home" element={<Navigate to="/" replace />} /> {/* 可选：重定向/home到/ */}
           <Route path="/history" element={<HistoryPage submissions={submissions} />} />
-          <Route 
-            path="/evaluation" 
-            element={
-              <EvaluationPage 
-                addSubmission={addSubmission}
-                recentNames={recentNames}
-              />
-            } 
-          />
+          <Route path="/evaluation" element={
+            <EvaluationPage 
+              addSubmission={addSubmission}
+              // recentNames={recentNames}
+            />
+          } />
+          {/* 可选：添加404页面处理 */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
     </Router>
