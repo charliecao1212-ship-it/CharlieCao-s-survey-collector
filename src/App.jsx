@@ -1,13 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // 确保导入 Navigate
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import HistoryPage from './pages/HistoryPage';
 import EvaluationPage from './pages/EvaluationPage';
-import { useLanguage } from './hooks/useLanguage'; // 导入 useLanguage
 import './App.css';
 
-// ✅ 第一步：定义模拟数据
+// 在组件外部定义课程映射表（避免重复创建）
+const COURSE_NAME_MAP = {
+  cn: {
+    'coding f': '语法基础',
+    'coding ad': '语法进阶', 
+    'coding acc': '语法加速',
+    'algorithm f': '算法原理',
+    'algorithm ad': '高阶算法',
+    'other': '其他课程',
+    'unknown': '未知课程'
+  },
+  en: {
+    'coding f': 'fundamental coding grammar',
+    'coding ad': 'advanced coding grammar', 
+    'coding acc': 'accelerated coding grammar',
+    'algorithm f': 'algorithm principles',
+    'algorithm ad': 'advanced algorithms',
+    'other': 'Other Course',
+    'unknown': 'Unknown Course'
+  }
+};
 const mockSubmissions = [
   { 
     id: 1, 
@@ -59,7 +78,7 @@ const mockSubmissions = [
   },
   { 
     id: 5, 
-    name: 'Charlie', 
+    name: 'Baily', 
     course: 'algorithm f', 
     teacher: 'Mr. Smith', 
     gain: 'I learned a lot of fun sorting algorithms and how to implement them in code during real uses.', 
@@ -88,7 +107,7 @@ const mockSubmissions = [
     teacher: 'Mr. Smith', 
     gain: 'I really think that the class is a fun one and I gained experiences working with the coding languages like C++ and Python. I realy think that the algorithms that we have iscussed int eh classes are really useful and effective for their uses.', 
     content: 'In the class we mainly learned about the sorting algorithms like the bubble sort and the quick sort methods and searched for some other methods by ourselves.', 
-    date: '2024-01-10', 
+    date: '2025-12-23', 
     rating: 4,
     todayCourse: 'algorithm f',
     feedback: 'The class is really fun and I hope that we can have more coding classes like this in the future including projects and selflearning.'
@@ -97,37 +116,37 @@ const mockSubmissions = [
     id: 8, 
     name: 'Coco', 
     course: 'algorithm f', 
-    teacher: '孙老师', 
-    gain: '学会了欣赏古典油画的基本技巧', 
-    content: '文艺复兴时期油画的特点和欣赏方法', 
-    date: '2024-01-10', 
+    teacher: 'Mr. Smith', 
+    gain: 'I learned a lot about the sorting methods designed by people in the past and I think that these methods are really useful in real life applications when functioning in an app or on a website.', 
+    content: 'The class taught us the methods like bubble sort and quick sort and we also did some small projects by ourselves to practice these algorithms.', 
+    date: '2025-12-23', 
     rating: 4,
     todayCourse: 'algorithm f',
-    feedback: '课程很有趣，开阔了眼界'
+    feedback: 'I think that the course is really well designed for me and I learned a lot from the projects Mr. Smith provides'
   },
   { 
     id: 9, 
-    name: '', 
-    course: 'algorithm f', 
-    teacher: '孙老师', 
-    gain: '学会了欣赏古典油画的基本技巧', 
-    content: '文艺复兴时期油画的特点和欣赏方法', 
-    date: '2024-01-10', 
-    rating: 4,
-    todayCourse: 'algorithm f',
-    feedback: '课程很有趣，开阔了眼界'
+    name: 'Harry Tang', 
+    course: 'algorithm ad', 
+    teacher: 'Dr. Lee', 
+    gain: 'In the class, I learned about some more difficult algorithms about searching, and it is really a great way to use recursive function to keep on searching and trying in different parts of a shape.', 
+    content: 'We learned BFS and DFS, and made a simulation of a man that is using the way of DFS to search for gold in a river bank.', 
+    date: '2025-12-23', 
+    rating: 5,
+    todayCourse: 'algorithm ad',
+    feedback: 'I think that the class provides a lot of chances for us to practice coding and I really like the projects that Dr. Lee designed for us. These animations are really a fun way to learn better and deeper about searching methods'
   },
   { 
-    id: 6, 
-    name: '孙八', 
-    course: 'algorithm f', 
-    teacher: '孙老师', 
-    gain: '学会了欣赏古典油画的基本技巧', 
-    content: '文艺复兴时期油画的特点和欣赏方法', 
-    date: '2024-01-10', 
-    rating: 4,
-    todayCourse: 'algorithm f',
-    feedback: '课程很有趣，开阔了眼界'
+    id: 10, 
+    name: 'Charlie Sun', 
+    course: 'algorithm ad', 
+    teacher: 'Dr. Lee', 
+    gain: 'The class keeps on learning about searching methods that are more advanced and I learned a lot about how these searching methods work in real life applications and I finally understsnds how a machine can work to find things.', 
+    content: 'We learned BFS and DFS, and made a simulation using a data collected by a scientific team of a riverbank.', 
+    date: '2025-12-23', 
+    rating: 5,
+    todayCourse: 'algorithm ad',
+    feedback: 'I think tha the class inserted with projects is really helpful for us to understand the searching methods better and I really like the way Dr. Lee teaches us these difficult concepts.'
   },
   { 
     id: 6, 
@@ -217,60 +236,46 @@ const mockSubmissions = [
 
 function App() {
   const [submissions, setSubmissions] = useState(() => {
-    // ✅ 第二步：合并逻辑 - 先尝试从localStorage加载，如果没有则使用模拟数据
     const savedData = localStorage.getItem('course-evaluations-array');
     if (savedData) {
       const parsedData = JSON.parse(savedData);
       if (Array.isArray(parsedData) && parsedData.length > 0) {
-        return parsedData; // 有本地数据就用本地的
+        return parsedData;
       }
     }
-    // 没有本地数据或数据为空时，使用模拟数据
     return mockSubmissions;
   });
-
-  const { language } = useLanguage();
 
   useEffect(() => {
     localStorage.setItem('course-evaluations-array', JSON.stringify(submissions));
   }, [submissions]);
 
-  // ✅ 第四步：保持原有的addSubmission函数不变
-  // src/App.jsx 中修改 addSubmission 函数里的课程映射部分
-const addSubmission = (newSubmission) => {
-  // ✅ 更新课程映射对象，与你的新课程选项保持一致
-  const courseNameMap = {
-    'coding f': language === 'cn' ? '语法基础' : 'fundamental coding grammar',
-    'coding ad': language === 'cn' ? '语法进阶' : 'advanced coding grammar',
-    'coding acc': language === 'cn' ? '语法加速' : 'accelerated coding grammar',
-    'algorithm f': language === 'cn' ? '算法原理' : 'algorithm principles',
-    'algorithm ad': language === 'cn' ? '高阶算法' : 'advanced algorithms',
-    'other': language === 'cn' ? '其他课程' : 'Other Course'
+  const addSubmission = (newSubmission) => {
+    const currentLanguage = localStorage.getItem('app-language') === 'en' ? 'en' : 'cn';
+    
+    const submissionWithMeta = {
+      ...newSubmission,
+      id: submissions.length > 0 ? Math.max(...submissions.map(s => s.id)) + 1 : 1,
+      date: new Date().toLocaleDateString('zh-CN'),
+      course: COURSE_NAME_MAP[currentLanguage][newSubmission.todayCourse] || 
+              COURSE_NAME_MAP[currentLanguage]['unknown']
+    };
+    
+    const updatedSubmissions = [submissionWithMeta, ...submissions];
+    setSubmissions(updatedSubmissions);
+    
+    return submissionWithMeta;
   };
-  
-  const submissionWithMeta = {
-    ...newSubmission,
-    id: submissions.length > 0 ? Math.max(...submissions.map(s => s.id)) + 1 : 1,
-    date: new Date().toLocaleDateString('zh-CN'),
-    // 使用新的映射转换 todayCourse
-    course: courseNameMap[newSubmission.todayCourse] || 
-            (language === 'cn' ? '未知课程' : 'Unknown Course')
-  };
-  
-  const updatedSubmissions = [submissionWithMeta, ...submissions];
-  setSubmissions(updatedSubmissions);
-  
-  return submissionWithMeta;
-};
 
-  // ✅ 第五步：获取最近评价者（保持原有逻辑）
   const recentNames = [...new Set(submissions.slice(0, 5).map(s => s.name))];
 
   return (
     <Router>
       <Layout>
         <Routes>
-          <Route path="/" element={<HomePage submissions={submissions} />} />
+          {/* 关键修改：添加重定向，确保根路径显示首页 */}
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/home" element={<HomePage submissions={submissions} />} />
           <Route path="/history" element={<HistoryPage submissions={submissions} />} />
           <Route 
             path="/evaluation" 
@@ -281,6 +286,8 @@ const addSubmission = (newSubmission) => {
               />
             } 
           />
+          {/* 可选：处理404，重定向到首页 */}
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </Layout>
     </Router>
