@@ -269,7 +269,6 @@ const mockSubmissions = [
     feedback: 'I really think that a better way to help us understand these searching methods better is to include more projects in the class and we have to practice a lot byourselves, too. I would suggest Dr. Lee to include more projects in the next class together.'
   }
 ];
-
 function App() {
   const [submissions, setSubmissions] = useState(() => {
     const savedData = localStorage.getItem('course-evaluations-array');
