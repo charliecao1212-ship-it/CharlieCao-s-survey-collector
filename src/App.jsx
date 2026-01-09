@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // 确保导入 Navigate
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // 改为HashRouter
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import HistoryPage from './pages/HistoryPage';
@@ -305,11 +305,10 @@ function App() {
 
   const recentNames = [...new Set(submissions.slice(0, 5).map(s => s.name))];
 
-  return (
-    <Router>
+ return (
+    <Router> {/* 现在使用的是HashRouter */}
       <Layout>
         <Routes>
-          {/* 关键修改：添加重定向，确保根路径显示首页 */}
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<HomePage submissions={submissions} />} />
           <Route path="/history" element={<HistoryPage submissions={submissions} />} />
@@ -322,7 +321,6 @@ function App() {
               />
             } 
           />
-          {/* 可选：处理404，重定向到首页 */}
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </Layout>
