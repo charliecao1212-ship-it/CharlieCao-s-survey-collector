@@ -309,11 +309,11 @@ function App() {
     <HashRouter> {/* 直接使用HashRouter */}
       <Layout>
         <Routes>
-          <Route path="/" element={<Navigate to="/#/home" replace />} />
-          <Route path="/#/home" element={<HomePage submissions={submissions} />} />
-          <Route path="/#/history" element={<HistoryPage submissions={submissions} />} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/home" element={<HomePage submissions={submissions} />} />
+          <Route path="/history" element={<HistoryPage submissions={submissions} />} />
           <Route 
-            path="/#/evaluation" 
+            path="/evaluation" 
             element={
               <EvaluationPage 
                 addSubmission={addSubmission}
@@ -321,7 +321,7 @@ function App() {
               />
             } 
           />
-          <Route path="/#/*" element={<Navigate to="/#/home" replace />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </Layout>
     </HashRouter>
