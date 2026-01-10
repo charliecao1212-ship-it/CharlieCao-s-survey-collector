@@ -23,7 +23,7 @@ const ForceRedirect = () => {
     
     // 如果访问的是根路径或index.html，重定向到/home
     if (currentPath === base + '/' || currentPath === base + '/index.html') {
-      window.history.replaceState(null, '', base + '/home');
+      window.history.replaceState(null, '', base);
     }
   }, []);
   return null;
@@ -37,4 +37,4 @@ root.render(
       <App />
     </LanguageProvider>
   </React.StrictMode>
-);
+)
