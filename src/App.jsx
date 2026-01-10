@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // 改为HashRouter
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'; // 改为HashRouter
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import HistoryPage from './pages/HistoryPage';
